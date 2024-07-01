@@ -1,0 +1,312 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "5d1ac8be-891c-4753-b3ed-5c8dc79022e7",
+  "prevId": "282c98cf-e9fc-4e64-98a8-f6ad027382e7",
+  "tables": {
+    "collectionTypeToStation": {
+      "name": "collectionTypeToStation",
+      "columns": {
+        "collectionTypeId": {
+          "name": "collectionTypeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stationId": {
+          "name": "stationId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "collectionTypeToStation_collectionTypeId_collectionTypes_id_fk": {
+          "name": "collectionTypeToStation_collectionTypeId_collectionTypes_id_fk",
+          "tableFrom": "collectionTypeToStation",
+          "tableTo": "collectionTypes",
+          "columnsFrom": [
+            "collectionTypeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "collectionTypeToStation_stationId_stations_id_fk": {
+          "name": "collectionTypeToStation_stationId_stations_id_fk",
+          "tableFrom": "collectionTypeToStation",
+          "tableTo": "stations",
+          "columnsFrom": [
+            "stationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "collectionTypeToStation_collectionTypeId_stationId_pk": {
+          "columns": [
+            "collectionTypeId",
+            "stationId"
+          ],
+          "name": "collectionTypeToStation_collectionTypeId_stationId_pk"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "collectionTypes": {
+      "name": "collectionTypes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "collectionTypes_name_unique": {
+          "name": "collectionTypes_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "measurementCollections": {
+      "name": "measurementCollections",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(current_timestamp)"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "current_timestamp"
+        },
+        "collectionTypeId": {
+          "name": "collectionTypeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "measurementCollections_collectionTypeId_collectionTypes_id_fk": {
+          "name": "measurementCollections_collectionTypeId_collectionTypes_id_fk",
+          "tableFrom": "measurementCollections",
+          "tableTo": "collectionTypes",
+          "columnsFrom": [
+            "collectionTypeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "stationTypes": {
+      "name": "stationTypes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "stationTypes_name_unique": {
+          "name": "stationTypes_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "stations": {
+      "name": "stations",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stationTypeId": {
+          "name": "stationTypeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "stations_stationTypeId_stationTypes_id_fk": {
+          "name": "stations_stationTypeId_stationTypes_id_fk",
+          "tableFrom": "stations",
+          "tableTo": "stationTypes",
+          "columnsFrom": [
+            "stationTypeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tempHumidMeasurements": {
+      "name": "tempHumidMeasurements",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "temperature": {
+          "name": "temperature",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "humidity": {
+          "name": "humidity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stationId": {
+          "name": "stationId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "collectionId": {
+          "name": "collectionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tempHumidMeasurements_stationId_stations_id_fk": {
+          "name": "tempHumidMeasurements_stationId_stations_id_fk",
+          "tableFrom": "tempHumidMeasurements",
+          "tableTo": "stations",
+          "columnsFrom": [
+            "stationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "tempHumidMeasurements_collectionId_measurementCollections_id_fk": {
+          "name": "tempHumidMeasurements_collectionId_measurementCollections_id_fk",
+          "tableFrom": "tempHumidMeasurements",
+          "tableTo": "measurementCollections",
+          "columnsFrom": [
+            "collectionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

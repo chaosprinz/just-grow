@@ -1,0 +1,1 @@
+ALTER TABLE `collectionTypes` ADD `description` text;
