@@ -4,8 +4,11 @@
   "description": "collecting data from my grows in sqlite-database having a http-api",
   "main": "server.js",
   "scripts": {
-    "test": "jest --coverage",
-    "dev": "tsx src/server.ts"
+    "test": "NODE_ENV=test jest --coverage",
+    "dev": "NODE_ENV=development tsx src/server.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio --port 3001 --verbose"
   },
   "author": "",
   "license": "ISC",
