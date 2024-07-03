@@ -1,6 +1,6 @@
 {
   "name": "growdb",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "collecting data from my grows in sqlite-database having a http-api",
   "main": "server.js",
   "scripts": {
