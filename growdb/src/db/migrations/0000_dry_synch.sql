@@ -8,13 +8,14 @@ CREATE TABLE `collectionTypeToStation` (
 --> statement-breakpoint
 CREATE TABLE `collectionTypes` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL
+	`name` text NOT NULL,
+	`description` text
 );
 --> statement-breakpoint
 CREATE TABLE `measurementCollections` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`created_at` text DEFAULT (current_timestamp),
-	`updated_at` text DEFAULT current_timestamp,
+	`createdAt` integer DEFAULT (UNIXEPOCH(CURRENT_TIMESTAMP)),
+	`updatedAt` integer DEFAULT (UNIXEPOCH(CURRENT_TIMESTAMP)),
 	`collectionTypeId` integer,
 	FOREIGN KEY (`collectionTypeId`) REFERENCES `collectionTypes`(`id`) ON UPDATE cascade ON DELETE set null
 );
@@ -27,7 +28,7 @@ CREATE TABLE `stationTypes` (
 CREATE TABLE `stations` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
-	`stationTypeId` integer NOT NULL,
+	`stationTypeId` integer,
 	FOREIGN KEY (`stationTypeId`) REFERENCES `stationTypes`(`id`) ON UPDATE cascade ON DELETE set null
 );
 --> statement-breakpoint
@@ -35,8 +36,8 @@ CREATE TABLE `tempHumidMeasurements` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`temperature` integer NOT NULL,
 	`humidity` integer NOT NULL,
-	`stationId` integer NOT NULL,
-	`collectionId` integer NOT NULL,
+	`stationId` integer,
+	`collectionId` integer,
 	FOREIGN KEY (`stationId`) REFERENCES `stations`(`id`) ON UPDATE cascade ON DELETE set null,
 	FOREIGN KEY (`collectionId`) REFERENCES `measurementCollections`(`id`) ON UPDATE cascade ON DELETE set null
 );

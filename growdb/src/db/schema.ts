@@ -42,7 +42,6 @@ export const stations = sqliteTable('stations', {
     onUpdate:'cascade', 
     onDelete: 'set null',
   })
-  .notNull(),
 })
 
 /**
@@ -128,12 +127,11 @@ export const collectionTypeToStationRelations = relations(collectionTypeToStatio
  */
 export const measurementCollections = sqliteTable('measurementCollections', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  created_at: text('created_at').default(sql`(current_timestamp)`),
-  updated_at: text('updated_at')
-    .default(sql`current_timestamp`)
+  createdAt: integer('createdAt', {mode: 'timestamp'}).default(sql`(UNIXEPOCH(CURRENT_TIMESTAMP))`),
+  updatedAt: integer('updatedAt', {mode: 'timestamp'})
+    .default(sql`(UNIXEPOCH(CURRENT_TIMESTAMP))`)
     .$onUpdate(() => {
-      const date: Date = new Date()
-      return date.toString()
+      return new Date()
     }),
   collectionTypeId: integer('collectionTypeId')
     .references(() => collectionTypes.id, {
@@ -155,12 +153,10 @@ export const tempHumidMeasurements = sqliteTable('tempHumidMeasurements', {
     .references(() => stations.id, {
       onUpdate: 'cascade', 
       onDelete: 'set null'
-    })
-    .notNull(),
+    }),
   collectionId: integer('collectionId')
     .references(() => measurementCollections.id, {
       onUpdate: 'cascade',
       onDelete: 'set null',
-    })
-    .notNull(),
+    }),
 })
