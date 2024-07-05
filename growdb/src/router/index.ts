@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 import createRouterFromTableApi from '../lib/helper/createRouterFromTableApi'
-import collectionTypes from '../lib/collectionType'
+import collectionTypes from '../lib/collectionTypes'
 import measurementCollections from '../lib/measurementCollections'
 import stations from '../lib/stations'
 import stationTypes from '../lib/stationTypes'

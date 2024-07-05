@@ -62,7 +62,7 @@ export const stationRelations = relations(stations, ({ one, many }) => ({
     fields: [stations.stationTypeId],
     references: [stationTypes.id]
   }),
-  collectionType: many(collectionTypeToStation),
+  collectionType: many(collectionTypeToStations),
 }))
 
 /**
@@ -93,7 +93,7 @@ export const collectionTypes = sqliteTable('collectionTypes', {
  * as described above, we have a many->many relationship to stations 
  */
 export const collectionTypeRelations = relations(collectionTypes, ({ many }) => ({
-  collectionTypeToStation: many(collectionTypeToStation),
+  collectionTypeToStations: many(collectionTypeToStations),
 }))
 
 
@@ -101,7 +101,7 @@ export const collectionTypeRelations = relations(collectionTypes, ({ many }) => 
  * ## collectionTypeToStation
  * join-table for relations bettween collectionTypes and stations
  */
-export const collectionTypeToStation = sqliteTable('collectionTypeToStation', 
+export const collectionTypeToStations = sqliteTable('collectionTypeToStation', 
   {
     collectionTypeId: integer('collectionTypeId')
     .notNull()
@@ -120,13 +120,13 @@ export const collectionTypeToStation = sqliteTable('collectionTypeToStation',
   })
 )
 
-export const collectionTypeToStationRelations = relations(collectionTypeToStation, ({ one }) => ({
+export const collectionTypeToStationRelations = relations(collectionTypeToStations, ({ one }) => ({
   collectionType: one(collectionTypes, {
-    fields: [collectionTypeToStation.collectionTypeId],
+    fields: [collectionTypeToStations.collectionTypeId],
     references: [collectionTypes.id]
   }),
   station: one(stations, {
-    fields: [collectionTypeToStation.stationId],
+    fields: [collectionTypeToStations.stationId],
     references: [stations.id],
   })
 }))
