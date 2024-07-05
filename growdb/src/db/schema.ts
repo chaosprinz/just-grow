@@ -26,6 +26,14 @@ export const stationTypes = sqliteTable('stationTypes', {
 })
 
 /**
+ * ### stationTypeRelations
+ *  - many->one-relation to stations 
+ */
+export const stationTypeRelations = relations(stationTypes, ({ many }) =>({
+  stations: many(stations)
+}))
+
+/**
  * ## station
  * well... the actual station
  * 
@@ -45,12 +53,16 @@ export const stations = sqliteTable('stations', {
 })
 
 /**
- * ## stationRelations
- * stations will have a many->manyRelations to collectionTypes, as
- * described in collectionTypes 
+ * ### stationRelations
+ *  - many->many-relations to collectionTypes
+ *  - many->one-relations to stationTypes  
  */
-export const stationRelations = relations(stations, ({ many }) => ({
-  collectionTypeToStation: many(collectionTypeToStation),
+export const stationRelations = relations(stations, ({ one, many }) => ({
+  stationType: one(stationTypes, {
+    fields: [stations.stationTypeId],
+    references: [stationTypes.id]
+  }),
+  collectionType: many(collectionTypeToStation),
 }))
 
 /**

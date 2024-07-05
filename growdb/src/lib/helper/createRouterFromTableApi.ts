@@ -4,13 +4,14 @@ const createRouterFromTableApi = (tableApi: any): Router => {
   const router = express.Router()
 
     
-  router.get('/', (req, res) => {
-    const result = tableApi.getMany()
+  router.get('/', async (req, res) => {
+    const result = await tableApi.getMany()
+    
     res.json(result)
   })
 
-  router.get('/:id', (req, res) => {
-    const result = tableApi.getOne(parseInt(req.params.id))
+  router.get('/:id', async (req, res) => {
+    const result = await tableApi.getOne(parseInt(req.params.id))
     if(!result) res
       .status(404)
       .json({error: 'Not found'})
