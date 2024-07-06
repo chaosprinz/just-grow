@@ -18,8 +18,8 @@ const createRouterFromTableApi = (tableApi: any): Router => {
     res.json(result)
   })
 
-  router.post('/', (req, res) => {
-    const result = tableApi.createOne(req.body)
+  router.post('/', async (req, res) => {
+    const result = await tableApi.createOne(req.body)
     res.json(result)
   })
 
