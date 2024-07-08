@@ -152,6 +152,13 @@ export const measurementCollections = sqliteTable('measurementCollections', {
     })
 })
 
+export const measurementCollectionRelations = relations(measurementCollections, ({ one }) => ({
+  collectionType: one(collectionTypes, {
+    fields: [measurementCollections.collectionTypeId],
+    references: [collectionTypes.id],
+  }),
+}))
+
 /**
  * ## TempHumidMeasurements
  * TempHumidMeasurements collect data from stations of type
@@ -172,3 +179,14 @@ export const tempHumidMeasurements = sqliteTable('tempHumidMeasurements', {
       onDelete: 'set null',
     }),
 })
+
+export const tempHumidMeasurementsRelations = relations(tempHumidMeasurements, ({ one }) => ({
+  station: one(stations, {
+    fields: [tempHumidMeasurements.stationId],
+    references: [stations.id],
+  }),
+  collection: one(measurementCollections, {
+    fields: [tempHumidMeasurements.collectionId],
+    references: [measurementCollections.id],
+  })
+}))
