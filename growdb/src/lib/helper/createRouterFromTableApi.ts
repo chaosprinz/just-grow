@@ -23,8 +23,8 @@ const createRouterFromTableApi = (tableApi: any): Router => {
     res.json(result)
   })
 
-  router.put('/:id', (req, res) => {
-    const result = tableApi
+  router.put('/:id', async (req, res) => {
+    const result = await tableApi
       .updateOne(
         parseInt(req.params.id), 
         req.body

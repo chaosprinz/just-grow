@@ -1,10 +1,9 @@
 import { eq } from 'drizzle-orm';
 import { collectionTypes as collectionTypesTable } from '../db/schema'
-import collectionTypeToStations from './collectionTypeToStations';
+import collectionTypeToStations from './collectionTypeToStations'
 import db from './db'
 import createTableApi from './helper/createTableApi'
-import stations, { StationData } from './stations';
-
+import stations, { StationData } from './stations'
 const _collectionTypes = createTableApi(collectionTypesTable)
 
 export interface CollectionTypeData {
@@ -16,57 +15,107 @@ export interface CollectionTypeData {
   }
 }
 
-const validateNew = (data: CollectionTypeData) => {
+/**
+ * Validates the given data object and throws an error if any validation errors occur.
+ *
+ * @param {CollectionTypeData} data - The data object to be validated.
+ * @throws {string} A concatenated string of all validation error messages.
+ */
+const validate = (data: CollectionTypeData) => {
   const errors = []
   if (!data.name) errors.push({
     message: "no name was given"
   })
-  return errors
+  if (errors.length > 0) {
+    throw errors.map(err => err.message).toString()
+  }
 }
+
+/**
+ * Adds existing or new stations to a collection type.
+ *
+ * @param {number} id - The ID of the collection type.
+ * @param {CollectionTypeData} data - The data containing the stations to be added.
+ * @return {void} This function does not return anything.
+ */
+const addStationsToCollectionType = (id: number, data: CollectionTypeData) => {
+  if (data.stations) {
+    if (data.stations.existing) {
+      for (const stationId of data.stations.existing) {
+        collectionTypeToStations.createOne({
+          collectionTypeId: id,
+          stationId
+        })
+      }
+    }
+    if (data.stations.new) {
+      for (const stationData of data.stations.new) {
+        const station = stations.upsertOne(stationData)
+        collectionTypeToStations.createOne({
+          collectionTypeId: id,
+          stationId: station.id
+        })
+      }
+    }
+  }
+}
+
+/**
+ * Retrieves a single collection type from the database based on the provided ID.
+ *
+ * @param {number} id - The ID of the collection type to retrieve.
+ * @return {Promise<CollectionType | null>} A promise that resolves to the retrieved collection type, or null if not found.
+ */
+const getOneCollectionType = (id: number) => db.query.collectionTypes.findFirst({
+  where: eq(collectionTypesTable.id, id),
+  columns: {
+    id: true,
+    name: true, 
+  },
+  with: {
+    stations: {
+      columns: {},
+      with: {
+        station: {
+          columns: { 
+            id: true, 
+            name: true
+          },
+          with: { stationType: true }
+        }
+      }
+    }
+  }
+})
 
 const collectionTypes = {
   ..._collectionTypes,
+    /**
+     * Creates a new collection type and associates it with existing or new stations.
+     *
+     * @param {CollectionTypeData} data - The data for creating the collection type.
+     * @return {Promise<CollectionType | null>} The created collection type with associated stations, or null if not found.
+     */
   createOne: (data: CollectionTypeData) => {
-    const errors = validateNew(data)
-    if (errors.length > 0) {
-      throw errors.map(err => err.message).toString()
-    }
+    validate(data)
     const newCollectionType = _collectionTypes.createOne(data)
     
-    if (data.stations) {
-      if (data.stations.existing) {
-        for (let i = 0; i < data.stations.existing.length; i++) {
-          collectionTypeToStations.createOne({
-            collectionTypeId: newCollectionType.id,
-            stationId: data.stations.existing[i]
-          })
-        }
-      }
-      
-      if (data.stations.new) {
-        for (let i = 0; i < data.stations.new.length; i++) {
-          const station = stations.createOne(data.stations.new[i])
+    addStationsToCollectionType(newCollectionType.id, data)
+    return getOneCollectionType(newCollectionType.id)
+  },
 
-          collectionTypeToStations.createOne({
-            collectionTypeId: newCollectionType.id,
-            stationId: station.id
-          })
-        }
-      }
-    }
+  /**
+   * Updates a collection type with the provided ID using the given data.
+   *
+   * @param {number} id - The ID of the collection type to update.
+   * @param {CollectionTypeData} data - The data to update the collection type.
+   * @return {Promise<CollectionType | null>} The updated collection type or null if not found.
+   */
+  updateOne: (id: number, data: CollectionTypeData) => {
+    const updatedCollectionType = _collectionTypes.updateOne(id, data)
 
-    const fullCollectionType = db.query.collectionTypes.findFirst({
-      where: eq(collectionTypesTable.id, newCollectionType.id),
-      with: {
-        stations: {
-          with: {
-            station: true
-          }
-        }
-      }
-    })
-
-    return fullCollectionType
+    addStationsToCollectionType(updatedCollectionType.id, data)
+    return getOneCollectionType(updatedCollectionType.id)
   }
 }
 
