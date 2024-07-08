@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { createOne, eq } from 'drizzle-orm'
 import { tempHumidMeasurements as tempHumidMeasurementsTable,
   measurementCollections as measurementCollectionsTable,
   stations as stationsTable,
@@ -6,8 +6,20 @@ import { tempHumidMeasurements as tempHumidMeasurementsTable,
  } from '../db/schema'
 import db from './db'
 import createTableApi from './helper/createTableApi'
+import stations, { StationData } from './stations'
+import measurementCollections, { MeasurementCollectionData } from './measurementCollections'
 
 const _tempHumidMeasurements = createTableApi(tempHumidMeasurementsTable)
+
+export interface TempHumidMeasurementData {
+  temperature: number
+  humidity: number
+  stationId?: number
+  collectionId?: number
+  newStation?: StationData
+  newCollection?: MeasurementCollectionData
+}
+
 
 const getOneTempHumidMeasurement = (id: number) => db.query.tempHumidMeasurements.findFirst({
   columns: {
@@ -68,7 +80,34 @@ const tempHumidMeasurements = {
     }
   }),
 
-  getOne: (id: number) => getOneTempHumidMeasurement(id)
+  getOne: (id: number) => getOneTempHumidMeasurement(id),
+
+  /**
+   * A function that creates a new TempHumidMeasurement record based on the provided data.
+   *
+   * @param {TempHumidMeasurementData} data - The data to create the TempHumidMeasurement record.
+   * @return {ReturnType<typeof getOneTempHumidMeasurement>} The created TempHumidMeasurement record.
+   */
+  createOne: (data: TempHumidMeasurementData) => {
+    if (data.newCollection) data.collectionId = measurementCollections.createOne(data.newCollection).id
+    if (data.newStation) data.stationId = stations.createOne(data.newStation).id
+    const newMeasurementId = _tempHumidMeasurements.createOne(data).id
+    return getOneTempHumidMeasurement(newMeasurementId)
+  },
+
+  /**
+   * Updates a TempHumidMeasurement record with the specified ID using the provided data.
+   *
+   * @param {number} id - The ID of the TempHumidMeasurement record to update.
+   * @param {TempHumidMeasurementData} data - The data to update the TempHumidMeasurement record.
+   * @return {ReturnType<typeof getOneTempHumidMeasurement>} The updated TempHumidMeasurement record.
+   */
+  updateOne: (id: number, data: TempHumidMeasurementData) => {
+    if (data.newCollection) data.collectionId = measurementCollections.createOne(data.newCollection).id
+    if (data.newStation) data.stationId = stations.createOne(data.newStation).id
+    const newMeasurementId = _tempHumidMeasurements.updateOne(id, data).id
+    return getOneTempHumidMeasurement(newMeasurementId)
+  }
 }
 
 export default tempHumidMeasurements
