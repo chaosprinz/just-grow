@@ -1,4 +1,4 @@
-import { createOne, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { tempHumidMeasurements as tempHumidMeasurementsTable,
   measurementCollections as measurementCollectionsTable,
   stations as stationsTable,
@@ -80,6 +80,27 @@ const tempHumidMeasurements = {
     }
   }),
 
+  getOne: (id: number) => getOneTempHumidMeasurement(id),
+
+  /**
+   * A function that creates a new TempHumidMeasurement record based on the provided data.
+   *
+   * @param {TempHumidMeasurementData} data - The data to create the TempHumidMeasurement record.
+   * @return {ReturnType<typeof getOneTempHumidMeasurement>} The created TempHumidMeasurement record.
+   */
+  createOne: (data: TempHumidMeasurementData) => {
+    if (data.newCollection) data.collectionId = measurementCollections.createOne(data.newCollection).id
+    if (data.newStation) data.stationId = stations.createOne(data.newStation).id
+    const newMeasurementId = _tempHumidMeasurements.createOne(data).id
+    return getOneTempHumidMeasurement(newMeasurementId)
+  },
+
+  updateOne: (id: number, data: TempHumidMeasurementData) => {
+    if (data.newCollection) data.collectionId = measurementCollections.createOne(data.newCollection).id
+    if (data.newStation) data.stationId = stations.createOne(data.newStation).id
+    const newMeasurementId = _tempHumidMeasurements.updateOne(id, data).id
+    return getOneTempHumidMeasurement(newMeasurementId)
+  }
   getOne: (id: number) => getOneTempHumidMeasurement(id),
 
   /**
