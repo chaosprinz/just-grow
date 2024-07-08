@@ -90,6 +90,34 @@ const getOneCollectionType = (id: number) => db.query.collectionTypes.findFirst(
 
 const collectionTypes = {
   ..._collectionTypes,
+  getOne: (id: number) => getOneCollectionType(id),
+  /**
+   * Retrieves multiple collection types from the database with specified columns and related
+   * stations and station types.
+   *
+   * @return {Promise<CollectionType[]>} A promise that resolves to an array of collection types.
+   */
+  getMany: () => db.query.collectionTypes.findMany({
+    columns: {
+      id: true,
+      name: true,
+    },
+    with: {
+      stations: {
+        columns: {},
+        with: {
+          station: {
+            columns: { 
+              id: true, 
+              name: true
+            },
+            with: { stationType: true }
+          }
+        }
+      }
+    }
+  }),
+
     /**
      * Creates a new collection type and associates it with existing or new stations.
      *
